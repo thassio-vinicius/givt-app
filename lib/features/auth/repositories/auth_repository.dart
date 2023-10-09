@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:givt_app/core/logging/logging.dart';
 import 'package:givt_app/core/network/api_service.dart';
 import 'package:givt_app/features/amount_presets/models/user_presets.dart';
+import 'package:givt_app/features/auth/models/models.dart';
 import 'package:givt_app/features/auth/models/session.dart';
 import 'package:givt_app/shared/models/stripe_response.dart';
 import 'package:givt_app/shared/models/temp_user.dart';
@@ -69,7 +70,7 @@ class AuthRepositoyImpl with AuthRepositoy {
     final response = await _apiService.refreshToken(
       {
         'refresh_token': session.refreshToken,
-        'grant_type': 'refresh_token',
+        'grant_type': GrantRequest.refreshToken.type,
       },
     );
     var newSession = Session.fromJson(response);
@@ -116,7 +117,7 @@ class AuthRepositoyImpl with AuthRepositoy {
       {
         'username': email,
         'password': password,
-        'grant_type': 'password',
+        'grant_type': GrantRequest.password.type,
       },
     );
 
