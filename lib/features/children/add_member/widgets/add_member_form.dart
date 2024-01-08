@@ -15,6 +15,7 @@ import 'package:givt_app/l10n/l10n.dart';
 import 'package:givt_app/utils/analytics_helper.dart';
 import 'package:givt_app/utils/app_theme.dart';
 import 'package:intl/intl.dart';
+import 'package:keyboard_actions/keyboard_actions.dart';
 
 class AddMemberForm extends StatefulWidget {
   const AddMemberForm(
@@ -34,6 +35,8 @@ class _AddMemberFormState extends State<AddMemberForm> {
   int _allowanceController = 15;
   final formKeyChild = GlobalKey<FormState>();
   final formKeyParent = GlobalKey<FormState>();
+  final FocusNode _nodeText1 = FocusNode();
+  final FocusNode _nodeText2 = FocusNode();
 
   void _incrementCounter() {
     if (_allowanceController > 998) {
@@ -319,12 +322,52 @@ class _AddMemberFormState extends State<AddMemberForm> {
     );
   }
 
+  /// Creates the [KeyboardActionsConfig] to hook up the fields
+  /// and their focus nodes to our [FormKeyboardActions].
+  KeyboardActionsConfig _buildConfig(BuildContext context) {
+    return KeyboardActionsConfig(
+      keyboardActionsPlatform: KeyboardActionsPlatform.ALL,
+      keyboardBarColor: const Color.fromARGB(255, 219, 49, 49),
+      nextFocus: true,
+      actions: [
+        KeyboardActionsItem(
+          focusNode: _nodeText1,
+        ),
+        KeyboardActionsItem(focusNode: _nodeText2, toolbarButtons: [
+          (node) {
+            return GestureDetector(
+              onTap: () => node.unfocus(),
+              child: const Padding(
+                padding: EdgeInsets.all(8.0),
+                child: Icon(Icons.close),
+              ),
+            );
+          }
+        ]),
+      ],
+    );
+  }
+
   Widget createChildForm(String currency) {
     return Form(
       key: formKeyChild,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
+          TextField(
+            keyboardType: TextInputType.number,
+            focusNode: _nodeText1,
+            decoration: InputDecoration(
+              hintText: "Input Number",
+            ),
+          ),
+          TextField(
+            keyboardType: TextInputType.text,
+            focusNode: _nodeText2,
+            decoration: const InputDecoration(
+              hintText: "Input Text with Custom Done Button",
+            ),
+          ),
           FamilyTextFormField(
             validator: (value) {
               if (value == null || value.isEmpty) {
